@@ -3,12 +3,10 @@ import pytesseract
 from PIL import Image
 import os
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Update this path
-
-os.environ['TESSDATA_PREFIX'] = r'C:\Program Files\Tesseract-OCR\tessdata'  # Update this path
-
-with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# The TESSDATA_PREFIX should be set via the environment variable in your deployment platform
+tessdata_prefix = os.environ.get('TESSDATA_PREFIX')
+if tessdata_prefix:
+    os.environ['TESSDATA_PREFIX'] = tessdata_prefix
 
 st.title("Hindi and English Text Extractor")
 
@@ -38,3 +36,5 @@ if uploaded_file is not None:
     except pytesseract.TesseractError as e:
         st.error(f"Tesseract Error: {str(e)}")
         st.error("Please ensure Tesseract is properly installed and configured.")
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
