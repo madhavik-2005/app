@@ -5,20 +5,20 @@ import os
 import sys
 
 if os.environ.get('STREAMLIT_CLOUD') == 'true':
-   
     os.system('sudo apt-get update')
     os.system('sudo apt-get install -y tesseract-ocr')
     os.system('sudo apt-get install -y tesseract-ocr-hin')
-   
     pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 else:
-   
     pass
 
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 st.title("Hindi and English Text Extractor")
+
+# Language selection
+language = st.radio("Select language for extraction:", ('Hindi', 'English', 'Both'))
 
 uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
@@ -27,7 +27,12 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
     
     try:
-        extracted_text = pytesseract.image_to_string(image, lang='hin+eng')
+        if language == 'Hindi':
+            extracted_text = pytesseract.image_to_string(image, lang='hin')
+        elif language == 'English':
+            extracted_text = pytesseract.image_to_string(image, lang='eng')
+        else:  # Both
+            extracted_text = pytesseract.image_to_string(image, lang='hin+eng')
         
         st.subheader("Extracted Text:")
         st.text(extracted_text)
